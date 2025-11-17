@@ -22,6 +22,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _loading = false;
   String? _error;
 
+  // ===== MÉTODO CORRIGIDO =====
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -31,17 +32,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     try {
-      await Future.delayed(const Duration(seconds: 1)); // simula cadastro
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Cadastro realizado com sucesso!')),
-        );
-        Navigator.pushReplacementNamed(context, '/login');
-      }
+      // simula cadastro
+      await Future.delayed(const Duration(seconds: 1));
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Cadastro realizado com sucesso!')),
+      );
+
+      // volta para tela de login
+      Navigator.pushReplacementNamed(context, '/');
+
     } catch (e) {
+      if (!mounted) return;
       setState(() => _error = 'Erro ao realizar cadastro');
     } finally {
-      setState(() => _loading = false);
+      if (mounted) {
+        setState(() => _loading = false);
+      }
     }
   }
 
@@ -64,6 +73,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 20),
+
                 TextFormField(
                   controller: _nomeCtrl,
                   decoration: const InputDecoration(labelText: 'Nome completo'),
@@ -71,6 +81,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       v == null || v.isEmpty ? 'Informe seu nome' : null,
                 ),
                 const SizedBox(height: 12),
+
                 TextFormField(
                   controller: _cpfCtrl,
                   decoration: const InputDecoration(labelText: 'CPF'),
@@ -79,6 +90,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       v == null || v.isEmpty ? 'Informe seu CPF' : null,
                 ),
                 const SizedBox(height: 12),
+
                 TextFormField(
                   controller: _dataNascCtrl,
                   readOnly: true,
@@ -93,15 +105,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       firstDate: DateTime(1900),
                       lastDate: DateTime.now(),
                     );
+
                     if (data != null) {
                       _dataNascCtrl.text =
                           DateFormat('dd/MM/yyyy').format(data);
                     }
                   },
-                  validator: (v) =>
-                      v == null || v.isEmpty ? 'Informe sua data de nascimento' : null,
+                  validator: (v) => v == null || v.isEmpty
+                      ? 'Informe sua data de nascimento'
+                      : null,
                 ),
                 const SizedBox(height: 12),
+
                 TextFormField(
                   controller: _celularCtrl,
                   decoration: const InputDecoration(labelText: 'Celular'),
@@ -110,6 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       v == null || v.isEmpty ? 'Informe seu celular' : null,
                 ),
                 const SizedBox(height: 12),
+
                 TextFormField(
                   controller: _emailCtrl,
                   decoration: const InputDecoration(labelText: 'E-mail'),
@@ -118,6 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       v == null || !v.contains('@') ? 'Informe um e-mail válido' : null,
                 ),
                 const SizedBox(height: 12),
+
                 TextFormField(
                   controller: _senhaCtrl,
                   decoration: const InputDecoration(labelText: 'Senha'),
@@ -126,16 +143,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       v == null || v.length < 4 ? 'Senha mínima de 4 caracteres' : null,
                 ),
                 const SizedBox(height: 12),
+
                 TextFormField(
                   controller: _confirmarSenhaCtrl,
-                  decoration:
-                      const InputDecoration(labelText: 'Confirmar Senha'),
+                  decoration: const InputDecoration(labelText: 'Confirmar Senha'),
                   obscureText: true,
-                  validator: (v) => v != _senhaCtrl.text
-                      ? 'As senhas não coincidem'
-                      : null,
+                  validator: (v) =>
+                      v != _senhaCtrl.text ? 'As senhas não coincidem' : null,
                 ),
+
                 const SizedBox(height: 24),
+
                 SizedBox(
                   height: 48,
                   child: ElevatedButton(
@@ -148,14 +166,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     child: _loading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text('Cadastrar',
-                            style: TextStyle(fontSize: 16, color: Colors.white)),
+                        : const Text(
+                            'Cadastrar',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
                   ),
                 ),
+
                 const SizedBox(height: 16),
+
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushReplacementNamed(context, '/login');
+                    Navigator.pushReplacementNamed(context, '/');
                   },
                   child: Center(
                     child: Text(
@@ -168,10 +190,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                 ),
+
                 if (_error != null) ...[
                   const SizedBox(height: 12),
-                  Text(_error!, style: const TextStyle(color: Colors.red)),
-                ]
+                  Text(
+                    _error!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ],
               ],
             ),
           ),

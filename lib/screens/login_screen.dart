@@ -139,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Link de cadastro
                     GestureDetector(
   onTap: () {
-    Navigator.pushReplacementNamed(context, '/register');
+    Navigator.pushNamed(context, '/register');
   },
   child: Center(
     child: Text(
