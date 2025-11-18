@@ -35,7 +35,7 @@ class ApiService {
   }
 
   // ============================
-  // CADASTRAR
+  // CADASTRAR USUÁRIO
   // ============================
   static Future<bool> registrarUsuario(Map<String, dynamic> dados) async {
     try {
@@ -76,7 +76,7 @@ class ApiService {
 
       return null;
     } catch (e) {
-      debugPrint("ERRO AO ATUALIZAR: $e");
+      debugPrint("ERRO ATUALIZAR USUÁRIO: $e");
       return null;
     }
   }

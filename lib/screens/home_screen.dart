@@ -9,6 +9,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  late Map<String, dynamic> usuario;
 
   // ============================================================
   // DOENÇAS + ÍCONES ESPECÍFICOS POR FAIXA ETÁRIA
@@ -207,11 +208,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
 
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    final usuario = args?['usuario'] ?? {};
+    // Recebe usuário enviado pelo LoginScreen
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
-    final nome = usuario['nome'] ?? 'Usuário';
-    final dataNascStr = usuario['dataNascimento'] ?? '1990-01-01';
+    usuario = args?['usuario'] ?? {};
+    final nome = usuario['nome'] ?? "Usuário";
+    final dataNascStr = usuario['dataNascimento'] ?? "1990-01-01";
 
     final dataNasc = DateTime.tryParse(dataNascStr) ?? DateTime(1990, 1, 1);
     final idade = DateTime.now().year - dataNasc.year;
@@ -220,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       body: CustomPaint(
-        painter: BubbleBackgroundPainter(),  // 🎨 FUNDO COM BOLHAS SUAVES
+        painter: BubbleBackgroundPainter(),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -232,15 +235,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   alignment: Alignment.topRight,
                   child: IconButton(
                     icon: const Icon(Icons.logout, color: Color(0xFF395B8C)),
-                    onPressed: () => Navigator.pushReplacementNamed(context, "/"),
+                    onPressed: () =>
+                        Navigator.pushReplacementNamed(context, "/"),
                   ),
                 ),
 
                 const SizedBox(height: 10),
 
-                // ----------------------- Saudação
                 Text(
-                  'Olá, $nome!',
+                  "Olá, $nome!",
                   style: const TextStyle(
                     fontSize: 22,
                     color: Color(0xFF395B8C),
@@ -248,11 +251,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 3),
+                const SizedBox(height: 5),
 
-                // ----------------------- Idade
                 Text(
-                  'Idade: $idade anos',
+                  "Idade: $idade anos",
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.black54,
@@ -260,23 +262,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
 
-                // ----------------------- Subtítulo
                 Text(
-                  'Estas são as doenças mais comuns na sua faixa etária, fique precavido!:',
+                  "Estas são as doenças mais comuns na sua faixa etária:",
                   style: TextStyle(color: Colors.grey[700], fontSize: 14),
                 ),
 
                 const SizedBox(height: 20),
 
-                // ----------------------- LISTA
                 Expanded(
                   child: ListView.builder(
                     itemCount: doencas.length,
                     itemBuilder: (context, index) {
                       final d = doencas[index];
-
                       return Container(
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         padding: const EdgeInsets.all(16),
@@ -284,24 +283,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
-                            color: primary.withValues(alpha: 0.25), // 🎨 nova borda elegante
+                            color: primary.withOpacity(0.25),
                             width: 1.5,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black12.withValues(alpha: 0.05),
+                              color: Colors.black12.withOpacity(0.05),
                               blurRadius: 8,
                               offset: const Offset(0, 3),
                             ),
                           ],
                         ),
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Icon(d['icone'], size: 40, color: primary),
-
                             const SizedBox(width: 16),
 
+                            //
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -318,20 +316,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Text(
                                     d['descricaoCurta'],
                                     style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black54,
-                                    ),
+                                        fontSize: 14, color: Colors.black54),
                                   ),
-
                                   const SizedBox(height: 12),
-
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: primary,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 22, vertical: 10),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius:
+                                            BorderRadius.circular(12),
                                       ),
                                     ),
                                     onPressed: () {
@@ -339,29 +332,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                         context: context,
                                         builder: (_) => AlertDialog(
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(20),
+                                            borderRadius:
+                                                BorderRadius.circular(20),
                                           ),
                                           title: Text(d['titulo']),
                                           content: Text(
-                                            '${d['descricaoLonga']}\n\n👨‍⚕️ Especialista recomendado: ${d['especialista']}',
+                                            "${d['descricaoLonga']}\n\n👨‍⚕️ Especialista recomendado: ${d['especialista']}",
                                           ),
                                           actions: [
                                             TextButton(
-                                              onPressed: () => Navigator.pop(context),
-                                              child: const Text('Fechar'),
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text("Fechar"),
                                             ),
                                           ],
                                         ),
                                       );
                                     },
-                                    child: const Text(
-                                      'ver mais',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
+                                    child: const Text("ver mais",
+                                        style:
+                                            TextStyle(color: Colors.white)),
+                                  )
                                 ],
                               ),
                             ),
@@ -370,24 +361,34 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                   ),
-                ),
+                )
               ],
             ),
           ),
         ),
       ),
 
+      // =============================================================
+      // BOTTOM NAVIGATION — CORRIGIDA
+      // =============================================================
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         selectedItemColor: primary,
         unselectedItemColor: Colors.grey,
         onTap: (i) {
           setState(() => _selectedIndex = i);
-          if (i == 1) Navigator.pushNamed(context, '/profile');
+
+          if (i == 1) {
+            Navigator.pushNamed(
+              context,
+              '/profile',
+              arguments: {"usuario": usuario},
+            );
+          }
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Início"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
         ],
       ),
     );
@@ -395,26 +396,23 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 // ================================================================
-// 🎨 PAINTER DO FUNDO COM BOLHAS SUAVES (OPÇÃO 4)
+// 🎨 PANO DE FUNDO — BOLHAS
 // ================================================================
 class BubbleBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFBFA8E5).withValues(alpha: 0.12)
+      ..color = const Color(0xFFBFA8E5).withOpacity(0.12)
       ..style = PaintingStyle.fill;
 
-    // Bolhas grandes
     canvas.drawCircle(Offset(size.width * 0.2, size.height * 0.1), 90, paint);
     canvas.drawCircle(Offset(size.width * 0.8, size.height * 0.25), 110, paint);
 
-    // Bolhas médias
-    paint.color = const Color(0xFFBFA8E5).withValues(alpha: 0.10);
+    paint.color = const Color(0xFFBFA8E5).withOpacity(0.10);
     canvas.drawCircle(Offset(size.width * 0.3, size.height * 0.6), 70, paint);
     canvas.drawCircle(Offset(size.width * 0.75, size.height * 0.75), 80, paint);
 
-    // Bolhas pequenas
-    paint.color = const Color(0xFFBFA8E5).withValues(alpha: 0.08);
+    paint.color = const Color(0xFFBFA8E5).withOpacity(0.08);
     canvas.drawCircle(Offset(size.width * 0.15, size.height * 0.8), 40, paint);
     canvas.drawCircle(Offset(size.width * 0.9, size.height * 0.55), 35, paint);
   }
