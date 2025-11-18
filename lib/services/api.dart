@@ -1,12 +1,12 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart'; // ← para usar debugPrint()
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
   static const String baseUrl = "http://192.168.0.3:3000";
 
   // ============================
-  // LOGIN → RETORNA USUÁRIO
+  // LOGIN
   // ============================
   static Future<Map<String, dynamic>?> login(
       String email, String senha) async {
@@ -35,7 +35,7 @@ class ApiService {
   }
 
   // ============================
-  // CADASTRAR USUÁRIO
+  // CADASTRAR
   // ============================
   static Future<bool> registrarUsuario(Map<String, dynamic> dados) async {
     try {
@@ -52,6 +52,32 @@ class ApiService {
     } catch (e) {
       debugPrint("ERRO AO CADASTRAR: $e");
       return false;
+    }
+  }
+
+  // ============================
+  // ATUALIZAR USUÁRIO
+  // ============================
+  static Future<Map<String, dynamic>?> atualizarUsuario(
+      String id, Map<String, dynamic> dados) async {
+    try {
+      final response = await http.put(
+        Uri.parse("$baseUrl/usuario/$id"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(dados),
+      );
+
+      debugPrint("UPDATE STATUS: ${response.statusCode}");
+      debugPrint("UPDATE BODY: ${response.body}");
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+
+      return null;
+    } catch (e) {
+      debugPrint("ERRO AO ATUALIZAR: $e");
+      return null;
     }
   }
 }
