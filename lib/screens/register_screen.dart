@@ -24,7 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? _error;
 
   Future<void> _submit() async {
-    print("🔥 BOTÃO DE CADASTRAR FOI PRESSIONADO!");
+    
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {

@@ -1,12 +1,9 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart'; // ← para usar debugPrint()
 import 'package:http/http.dart' as http;
 
 class ApiService {
-
   static const String baseUrl = "http://192.168.0.3:3000";
-
-  // Para emulador Android, use:
-  // static const String baseUrl = "http://10.0.2.2:3000";
 
   // ============================
   // LOGIN → RETORNA USUÁRIO
@@ -23,16 +20,16 @@ class ApiService {
         }),
       );
 
-      print("LOGIN STATUS: ${response.statusCode}");
-      print("LOGIN BODY: ${response.body}");
+      debugPrint("LOGIN STATUS: ${response.statusCode}");
+      debugPrint("LOGIN BODY: ${response.body}");
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body); // ← retorna usuário do backend
+        return jsonDecode(response.body);
       }
 
       return null;
     } catch (e) {
-      print("ERRO LOGIN: $e");
+      debugPrint("ERRO LOGIN: $e");
       return null;
     }
   }
@@ -48,12 +45,12 @@ class ApiService {
         body: jsonEncode(dados),
       );
 
-      print("CADASTRO STATUS: ${response.statusCode}");
-      print("CADASTRO BODY: ${response.body}");
+      debugPrint("CADASTRO STATUS: ${response.statusCode}");
+      debugPrint("CADASTRO BODY: ${response.body}");
 
       return response.statusCode == 201;
     } catch (e) {
-      print("ERRO AO CADASTRAR: $e");
+      debugPrint("ERRO AO CADASTRAR: $e");
       return false;
     }
   }
