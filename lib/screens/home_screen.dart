@@ -83,9 +83,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F2FD),
+
+      // -------------------------------------------------------
+      // 🔹 APP BAR COM BOTÃO DE LOGOUT (CANTO SUPERIOR DIREITO)
+      // -------------------------------------------------------
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Color(0xFF395B8C)),
+            tooltip: "Sair",
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, "/");
+            },
+          ),
+        ],
+      ),
+
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
