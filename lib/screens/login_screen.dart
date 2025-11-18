@@ -12,161 +12,183 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
   final _senhaCtrl = TextEditingController();
+
   bool _loading = false;
   String? _error;
 
   Future<void> _submit() async {
-    setState(() => _error = null);
     if (!_formKey.currentState!.validate()) return;
-    setState(() => _loading = true);
+
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
 
     try {
-  final ok = await Api.loginFake(_emailCtrl.text.trim(), _senhaCtrl.text.trim());
-  if (ok && mounted) {
-    Navigator.pushReplacementNamed(
-      context,
-      '/home',
-      arguments: {
-        'nome': 'Usuário',
-        'dataNascimento': '1985-06-14', // valor temporário
-      },
-    );
-  } else {
-    setState(() => _error = 'Credenciais inválidas');
-  }
-} catch (e) {
-  setState(() => _error = 'Erro ao efetuar login');
-} finally {
-  setState(() => _loading = false);
-}
+      final usuario = await ApiService.login(
+        _emailCtrl.text.trim(),
+        _senhaCtrl.text.trim(),
+      );
+
+      if (usuario != null && mounted) {
+        Navigator.pushReplacementNamed(
+          context,
+          '/home',
+          arguments: usuario,
+        );
+      } else {
+        setState(() => _error = "Credenciais inválidas");
+      }
+    } catch (e) {
+      setState(() => _error = "Erro ao efetuar login");
+    } finally {
+      setState(() => _loading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final primary = const Color(0xFF395B8C); // azul fixo para consistência
-    final textTheme = Theme.of(context).textTheme;
+    final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF4EFFA),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 40),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Cabeçalho
-              Row(
-                children: [
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: primary,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(Icons.medical_services, color: Colors.white, size: 30),
-                  ),
-                  const SizedBox(width: 14),
-                  const Text(
-                    'SAÚDE\nDO HOMEM',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, height: 1.2),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Cuide de você,\nprevina-se e viva melhor',
-                style: textTheme.bodyMedium?.copyWith(color: Colors.black54, height: 1.4),
-              ),
-              const SizedBox(height: 40),
+          padding: const EdgeInsets.all(24),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 40),
 
-              // Formulário
-              Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                // LOGO + TÍTULO
+                Row(
                   children: [
-                    TextFormField(
-                      controller: _emailCtrl,
-                      decoration: InputDecoration(
-                        labelText: 'E-mail',
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.email_outlined),
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: primary,
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (v) => v == null || v.isEmpty ? 'Informe o e-mail' : null,
+                      child: const Icon(Icons.add, color: Colors.white, size: 30),
                     ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _senhaCtrl,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: 'Senha',
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.lock_outline),
-                      ),
-                      validator: (v) =>
-                          v == null || v.length < 4 ? 'Senha mínima 4 caracteres' : null,
-                    ),
-                    const SizedBox(height: 28),
-
-                    // Botão Entrar
-                    SizedBox(
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: _loading ? null : _submit,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
+                    const SizedBox(width: 16),
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'SAÚDE',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF395B8C),
                           ),
                         ),
-                        child: _loading
-                            ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text(
-                                'Entrar',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 18),
-
-                    // Link de cadastro
-                    GestureDetector(
-  onTap: () {
-    Navigator.pushNamed(context, '/register');
-  },
-  child: Center(
-    child: Text(
-      'Não tem uma conta? Cadastre-se',
-      style: TextStyle(
-        color: primary,
-        decoration: TextDecoration.underline,
-        fontWeight: FontWeight.w500,
-      ),
-    ),
-  ),
-),
-
-                    // Erro
-                    if (_error != null) ...[
-                      const SizedBox(height: 14),
-                      Center(
-                        child: Text(
-                          _error!,
-                          style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                        Text(
+                          'DO HOMEM',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF395B8C),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ],
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 16),
+
+                const Text(
+                  'Cuide de você,\nprevina-se e viva melhor',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black54,
+                  ),
+                ),
+
+                const SizedBox(height: 40),
+
+                // EMAIL
+                TextFormField(
+                  controller: _emailCtrl,
+                  decoration: const InputDecoration(
+                    labelText: "E-mail",
+                    prefixIcon: Icon(Icons.email_outlined),
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (v) =>
+                      v == null || !v.contains('@') ? "Email inválido" : null,
+                ),
+
+                const SizedBox(height: 16),
+
+                // SENHA
+                TextFormField(
+                  controller: _senhaCtrl,
+                  decoration: const InputDecoration(
+                    labelText: "Senha",
+                    prefixIcon: Icon(Icons.lock_outline),
+                    border: OutlineInputBorder(),
+                  ),
+                  obscureText: true,
+                  validator: (v) =>
+                      v == null || v.isEmpty ? "Informe a senha" : null,
+                ),
+
+                const SizedBox(height: 24),
+
+                // BOTÃO LOGIN
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: _loading ? null : _submit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    child: _loading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            "Entrar",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // LINK CADASTRAR
+                Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacementNamed(context, '/register');
+                    },
+                    child: Text(
+                      'Não tem uma conta? Cadastre-se',
+                      style: TextStyle(
+                        color: primary,
+                        fontSize: 14,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+
+                if (_error != null) ...[
+                  const SizedBox(height: 15),
+                  Text(_error!, style: const TextStyle(color: Colors.red)),
+                ],
+              ],
+            ),
           ),
         ),
       ),
