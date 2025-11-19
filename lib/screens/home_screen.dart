@@ -166,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 12),
 
                 Text(
-                  "Estas são as doenças mais comuns na sua faixa etária:",
+                  "Estas são as doenças mais comuns na sua faixa etária, seja precavido!",
                   style: TextStyle(
                     color: theme.textTheme.bodyMedium?.color?.withValues(alpha:.7),
                     fontSize: 14,

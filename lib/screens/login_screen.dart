@@ -25,19 +25,20 @@ class _LoginScreenState extends State<LoginScreen> {
       _error = null;
     });
 
-    try {
-      final usuario = await ApiService.login(_emailCtrl.text.trim(), _senhaCtrl.text.trim());
+    final usuario = await ApiService.login(
+      _emailCtrl.text.trim(),
+      _senhaCtrl.text.trim(),
+    );
 
-      if (usuario != null && mounted) {
-        Navigator.pushReplacementNamed(context, '/home', arguments: usuario);
-      } else {
-        setState(() => _error = "Credenciais inválidas");
-      }
-    } catch (e) {
-      setState(() => _error = "Erro ao efetuar login");
-    } finally {
-      setState(() => _loading = false);
+    if (!mounted) return;
+
+    if (usuario != null) {
+      Navigator.pushReplacementNamed(context, '/home', arguments: usuario);
+    } else {
+      setState(() => _error = "Credenciais inválidas");
     }
+
+    setState(() => _loading = false);
   }
 
   @override
@@ -47,9 +48,13 @@ class _LoginScreenState extends State<LoginScreen> {
         ? Colors.white
         : const Color(0xFF395B8C);
 
+    final subTextColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white70
+        : Colors.black54;
+
     return Scaffold(
-      body: CustomPaint(
-        painter: BubbleBackgroundPainter(primary),
+      body: BubbleBackground(
+        color: primary,
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
@@ -60,48 +65,54 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const SizedBox(height: 40),
 
-                  // LOGO
+                  // LOGO + TÍTULO
                   Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                            color: primary,
-                            borderRadius: BorderRadius.circular(12)),
-                        child:
-                            const Icon(Icons.add, color: Colors.white, size: 30),
+                          color: primary,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.add, size: 32, color: Colors.white),
                       ),
                       const SizedBox(width: 16),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('SAÚDE',
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: textColor)),
-                          Text('DO HOMEM',
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: textColor)),
+                          Text(
+                            "SAÚDE",
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: textColor,
+                            ),
+                          ),
+                          Text(
+                            "DO HOMEM",
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: textColor,
+                            ),
+                          ),
                         ],
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
 
+                  // ⭐ TEXTO VOLTOU AQUI
                   Text(
                     'Cuide de você,\nprevina-se e viva melhor',
                     style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white70
-                            : Colors.black54),
+                      fontSize: 14,
+                      color: subTextColor,
+                    ),
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 30),
 
                   // EMAIL
                   TextFormField(
@@ -111,8 +122,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       prefixIcon: Icon(Icons.email_outlined),
                     ),
                     validator: (v) =>
-                        v == null || !v.contains('@') ? "Email inválido" : null,
+                        v == null || !v.contains("@") ? "E-mail inválido" : null,
                   ),
+
                   const SizedBox(height: 16),
 
                   // SENHA
@@ -127,48 +139,50 @@ class _LoginScreenState extends State<LoginScreen> {
                         v == null || v.isEmpty ? "Informe a senha" : null,
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 30),
 
+                  // BOTÃO ENTRAR
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
                       onPressed: _loading ? null : _submit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primary,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25)),
-                      ),
                       child: _loading
                           ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text("Entrar",
+                          : const Text(
+                              "Entrar",
                               style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold)),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
 
                   const SizedBox(height: 20),
 
+                  // LINK CADASTRO
                   Center(
                     child: GestureDetector(
                       onTap: () =>
                           Navigator.pushReplacementNamed(context, '/register'),
                       child: Text(
-                        'Não tem uma conta? Cadastre-se',
+                        "Não tem uma conta? Cadastre-se",
                         style: TextStyle(
-                            color: primary,
-                            fontSize: 14,
-                            decoration: TextDecoration.underline),
+                          color: primary,
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
                   ),
 
                   if (_error != null) ...[
-                    const SizedBox(height: 15),
-                    Text(_error!,
-                        style: const TextStyle(color: Colors.red)),
+                    const SizedBox(height: 20),
+                    Text(
+                      _error!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
                   ],
                 ],
               ),

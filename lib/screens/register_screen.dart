@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../services/api.dart';
 import '../widgets/bubble_background.dart';
+import '../widgets/frosted_appbar.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -54,15 +55,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (sucesso) {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('Cadastro realizado com sucesso!')));
+
         Navigator.pushReplacementNamed(context, '/');
       } else {
         setState(() {
-          _error =
-              'Erro ao realizar cadastro. Verifique os dados ou se o e-mail/CPF já estão cadastrados.';
+          _error = "Erro ao realizar cadastro. Tente outro e-mail/CPF.";
         });
       }
     } catch (e) {
-      if (mounted) setState(() => _error = 'Falha ao conectar ao servidor.');
+      if (!mounted) return;
+      setState(() => _error = "Falha ao conectar ao servidor.");
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -73,140 +75,148 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
-      body: CustomPaint(
-        painter: BubbleBackgroundPainter(primary),
+      body: BubbleBackground(
+        color: primary,
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppBar(
-                    title: const Text('Cadastro'),
-                    backgroundColor: Colors.transparent,
-                    foregroundColor: primary,
-                    elevation: 0,
-                    automaticallyImplyLeading: true,
-                  ),
+            child: Column(
+              children: [
 
-                  const SizedBox(height: 20),
+                // 👇 FROSTED APPBAR COM VOLTAR PERSONALIZADO
+                FrostedAppBar(
+                  title: "Cadastro",
+                  showBack: true,
+                  onBack: () {
+                    Navigator.pushReplacementNamed(context, '/');
+                  },
+                ),
 
-                  TextFormField(
-                    controller: _nomeCtrl,
-                    decoration: const InputDecoration(labelText: 'Nome completo'),
-                    validator: (v) => v == null || v.isEmpty ? 'Informe seu nome' : null,
-                  ),
-                  const SizedBox(height: 12),
+                const SizedBox(height: 20),
 
-                  TextFormField(
-                    controller: _cpfCtrl,
-                    decoration: const InputDecoration(labelText: 'CPF'),
-                    keyboardType: TextInputType.number,
-                    validator: (v) => v == null || v.isEmpty ? 'Informe seu CPF' : null,
-                  ),
-                  const SizedBox(height: 12),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
 
-                  TextFormField(
-                    controller: _dataNascCtrl,
-                    readOnly: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Data de Nascimento',
-                      suffixIcon: Icon(Icons.calendar_today),
-                    ),
-                    onTap: () async {
-                      final hoje = DateTime.now();
-                      DateTime? dataSelecionada = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime(2000),
-                        firstDate: DateTime(1900),
-                        lastDate: hoje,
-                      );
-                      if (dataSelecionada != null) {
-                        _dataNascCtrl.text =
-                            DateFormat('dd/MM/yyyy').format(dataSelecionada);
-                      }
-                    },
-                    validator: (v) =>
-                        v == null || v.isEmpty ? 'Informe sua data de nascimento' : null,
-                  ),
-                  const SizedBox(height: 12),
-
-                  TextFormField(
-                    controller: _celularCtrl,
-                    decoration: const InputDecoration(labelText: 'Celular'),
-                    keyboardType: TextInputType.phone,
-                    validator: (v) =>
-                        v == null || v.isEmpty ? 'Informe seu celular' : null,
-                  ),
-                  const SizedBox(height: 12),
-
-                  TextFormField(
-                    controller: _emailCtrl,
-                    decoration: const InputDecoration(labelText: 'E-mail'),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (v) =>
-                        v == null || !v.contains('@') ? 'Informe um e-mail válido' : null,
-                  ),
-                  const SizedBox(height: 12),
-
-                  TextFormField(
-                    controller: _senhaCtrl,
-                    decoration: const InputDecoration(labelText: 'Senha'),
-                    obscureText: true,
-                    validator: (v) =>
-                        v == null || v.length < 4 ? 'Senha mínima de 4 caracteres' : null,
-                  ),
-                  const SizedBox(height: 12),
-
-                  TextFormField(
-                    controller: _confirmarSenhaCtrl,
-                    decoration: const InputDecoration(labelText: 'Confirmar Senha'),
-                    obscureText: true,
-                    validator: (v) =>
-                        v != _senhaCtrl.text ? 'As senhas não coincidem' : null,
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  SizedBox(
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: _loading ? null : _submit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primary,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24)),
+                      TextFormField(
+                        controller: _nomeCtrl,
+                        decoration: const InputDecoration(labelText: "Nome completo"),
+                        validator: (v) =>
+                            v == null || v.isEmpty ? "Informe seu nome" : null,
                       ),
-                      child: _loading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text('Cadastrar',
-                              style: TextStyle(fontSize: 16, color: Colors.white)),
-                    ),
-                  ),
+                      const SizedBox(height: 12),
 
-                  const SizedBox(height: 16),
-
-                  GestureDetector(
-                    onTap: () => Navigator.pushReplacementNamed(context, '/'),
-                    child: Center(
-                      child: Text(
-                        'Já tem uma conta? Entrar',
-                        style: TextStyle(
-                            color: primary,
-                            decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.w500),
+                      TextFormField(
+                        controller: _cpfCtrl,
+                        decoration: const InputDecoration(labelText: "CPF"),
+                        keyboardType: TextInputType.number,
+                        validator: (v) =>
+                            v == null || v.isEmpty ? "Informe seu CPF" : null,
                       ),
-                    ),
-                  ),
+                      const SizedBox(height: 12),
 
-                  if (_error != null) ...[
-                    const SizedBox(height: 12),
-                    Text(_error!, style: const TextStyle(color: Colors.red)),
-                  ],
-                ],
-              ),
+                      TextFormField(
+                        controller: _dataNascCtrl,
+                        readOnly: true,
+                        decoration: const InputDecoration(
+                          labelText: "Data de Nascimento",
+                          suffixIcon: Icon(Icons.calendar_today),
+                        ),
+                        onTap: () async {
+                          final hoje = DateTime.now();
+                          DateTime? dataSelecionada = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime(2000),
+                            firstDate: DateTime(1900),
+                            lastDate: hoje,
+                          );
+                          if (dataSelecionada != null) {
+                            _dataNascCtrl.text =
+                                DateFormat('dd/MM/yyyy').format(dataSelecionada);
+                          }
+                        },
+                        validator: (v) =>
+                            v == null || v.isEmpty ? "Informe sua data de nascimento" : null,
+                      ),
+                      const SizedBox(height: 12),
+
+                      TextFormField(
+                        controller: _celularCtrl,
+                        decoration: const InputDecoration(labelText: "Celular"),
+                        keyboardType: TextInputType.phone,
+                        validator: (v) =>
+                            v == null || v.isEmpty ? "Informe seu celular" : null,
+                      ),
+                      const SizedBox(height: 12),
+
+                      TextFormField(
+                        controller: _emailCtrl,
+                        decoration: const InputDecoration(labelText: "E-mail"),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (v) =>
+                            v == null || !v.contains("@") ? "Informe um e-mail válido" : null,
+                      ),
+                      const SizedBox(height: 12),
+
+                      TextFormField(
+                        controller: _senhaCtrl,
+                        decoration: const InputDecoration(labelText: "Senha"),
+                        obscureText: true,
+                        validator: (v) =>
+                            v == null || v.length < 4 ? "Senha mínima de 4 caracteres" : null,
+                      ),
+                      const SizedBox(height: 12),
+
+                      TextFormField(
+                        controller: _confirmarSenhaCtrl,
+                        decoration: const InputDecoration(labelText: "Confirmar senha"),
+                        obscureText: true,
+                        validator: (v) =>
+                            v != _senhaCtrl.text ? "As senhas não coincidem" : null,
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      SizedBox(
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: _loading ? null : _submit,
+                          child: _loading
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : const Text(
+                                  "Cadastrar",
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      GestureDetector(
+                        onTap: () =>
+                            Navigator.pushReplacementNamed(context, '/'),
+                        child: Center(
+                          child: Text(
+                            "Já tem uma conta? Entrar",
+                            style: TextStyle(
+                              color: primary,
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      if (_error != null) ...[
+                        const SizedBox(height: 12),
+                        Text(_error!, style: const TextStyle(color: Colors.red)),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),
