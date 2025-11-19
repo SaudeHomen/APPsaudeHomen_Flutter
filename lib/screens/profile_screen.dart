@@ -27,7 +27,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
 
-    // Carrega os dados da tela anterior
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final args = ModalRoute.of(context)?.settings.arguments as Map?;
       final usuario = args?['usuario'] ?? {};
@@ -54,7 +53,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _salvarAlteracoes() async {
-    // validação do formulário (os campos marcados como obrigatórios)
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -68,7 +66,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       "celular": _celularCtrl.text.trim(),
     };
 
-    // só envia senha se o usuário digitou uma nova
     if (_senhaCtrl.text.trim().isNotEmpty) {
       dados["senha"] = _senhaCtrl.text.trim();
     }
@@ -77,9 +74,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     setState(() {
       _loading = false;
-      _mensagem = resultado != null
-          ? "Dados atualizados com sucesso!"
-          : "Erro ao atualizar dados!";
+      _mensagem =
+          resultado != null ? "Dados atualizados com sucesso!" : "Erro ao atualizar dados!";
     });
   }
 
@@ -88,16 +84,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F2FD),
-
       appBar: AppBar(
-        title: const Text(
-          "Meu Perfil",
-          style: TextStyle(color: Color(0xFF395B8C), fontWeight: FontWeight.bold),
-        ),
+        title: const Text("Meu Perfil"),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFF395B8C)),
       ),
 
       body: SafeArea(
@@ -107,22 +97,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             key: _formKey,
             child: Column(
               children: [
-                // CARD DE PERFIL
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black12.withOpacity(0.08),
+                        color: Colors.black.withValues(alpha:0.06),
                         blurRadius: 8,
                         offset: const Offset(0, 3),
                       )
                     ],
                   ),
-
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -136,9 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 12),
                       campoRead("Data de Nascimento", dataNascimento),
                       const SizedBox(height: 12),
-                      // senha é opcional -> obrigatorio: false
-                      campo("Nova senha (opcional)", _senhaCtrl,
-                          isPassword: true, obrigatorio: false),
+                      campo("Nova senha (opcional)", _senhaCtrl, isPassword: true, obrigatorio: false),
                     ],
                   ),
                 ),
@@ -149,9 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text(
                     _mensagem!,
                     style: TextStyle(
-                      color: _mensagem!.contains("sucesso")
-                          ? Colors.green
-                          : Colors.red,
+                      color: _mensagem!.contains("sucesso") ? Colors.green : Colors.red,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -163,21 +147,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: _loading ? null : _salvarAlteracoes,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
                     child: _loading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            "Salvar alterações",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                        : const Text("Salvar alterações"),
                   ),
                 ),
 
@@ -186,13 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 TextButton.icon(
                   onPressed: () => Navigator.pushReplacementNamed(context, "/"),
                   icon: const Icon(Icons.logout, color: Colors.red),
-                  label: const Text(
-                    "Sair da conta",
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  label: const Text("Sair da conta", style: TextStyle(color: Colors.red)),
                 ),
 
                 const SizedBox(height: 40),
@@ -204,47 +170,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // ============================ WIDGETS ============================
-  // campo agora tem parâmetro 'obrigatorio' (default true).
   Widget campo(String label, TextEditingController controller,
       {bool isPassword = false, bool obrigatorio = true}) {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
-      decoration: input(label),
+      decoration: InputDecoration(labelText: label),
       validator: (v) {
-        if (!obrigatorio) return null; // se não é obrigatório, aceita vazio
+        if (!obrigatorio) return null;
         if (v == null || v.isEmpty) return "Campo obrigatório";
         return null;
       },
     );
   }
 
-  // campo apenas leitura — com ícone que indica que não pode ser editado
   Widget campoRead(String label, String value) {
     return TextFormField(
       initialValue: value,
       enabled: false,
-      decoration: input(label).copyWith(
-        fillColor: const Color(0xFFEDEAF7),
-        filled: true,
-        suffixIcon: const Padding(
-          padding: EdgeInsets.only(right: 12.0),
-          child: Icon(Icons.block, color: Colors.grey),
-        ),
-      ),
-    );
-  }
-
-  InputDecoration input(String label) {
-    return InputDecoration(
-      labelText: label,
-      labelStyle: const TextStyle(color: Color(0xFF395B8C)),
-      filled: true,
-      fillColor: const Color(0xFFF3EEFB),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
+      decoration: InputDecoration(
+        labelText: label,
+        suffixIcon: const Icon(Icons.block),
       ),
     );
   }

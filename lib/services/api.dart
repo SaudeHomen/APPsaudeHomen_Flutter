@@ -3,21 +3,16 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
+  // Atualize conforme seu IP/ambiente
   static const String baseUrl = "http://192.168.0.2:3000";
 
-  // ============================
   // LOGIN
-  // ============================
-  static Future<Map<String, dynamic>?> login(
-      String email, String senha) async {
+  static Future<Map<String, dynamic>?> login(String email, String senha) async {
     try {
       final response = await http.post(
         Uri.parse("$baseUrl/login"),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "email": email,
-          "senha": senha,
-        }),
+        body: jsonEncode({"email": email, "senha": senha}),
       );
 
       debugPrint("LOGIN STATUS: ${response.statusCode}");
@@ -26,7 +21,6 @@ class ApiService {
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       }
-
       return null;
     } catch (e) {
       debugPrint("ERRO LOGIN: $e");
@@ -34,9 +28,7 @@ class ApiService {
     }
   }
 
-  // ============================
-  // CADASTRAR USUÁRIO
-  // ============================
+  // CADASTRO
   static Future<bool> registrarUsuario(Map<String, dynamic> dados) async {
     try {
       final response = await http.post(
@@ -55,28 +47,25 @@ class ApiService {
     }
   }
 
-  // ============================
-  // ATUALIZAR USUÁRIO
-  // ============================
+  // ATUALIZAR USUÁRIO (PUT /usuario/:id)
   static Future<Map<String, dynamic>?> atualizarUsuario(
-      String id, Map<String, dynamic> dados) async {
+      String id, Map<String, dynamic> updates) async {
     try {
       final response = await http.put(
         Uri.parse("$baseUrl/usuario/$id"),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode(dados),
+        body: jsonEncode(updates),
       );
 
-      debugPrint("UPDATE STATUS: ${response.statusCode}");
-      debugPrint("UPDATE BODY: ${response.body}");
+      debugPrint("ATUALIZAR STATUS: ${response.statusCode}");
+      debugPrint("ATUALIZAR BODY: ${response.body}");
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       }
-
       return null;
     } catch (e) {
-      debugPrint("ERRO ATUALIZAR USUÁRIO: $e");
+      debugPrint("ERRO AO ATUALIZAR: $e");
       return null;
     }
   }
