@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   // Atualize conforme seu IP/ambiente
-  static const String baseUrl = "http://192.168.0.2:3000";
+  static const String baseUrl = "https://unfactorable-ependymal-major.ngrok-free.dev";
 
   // LOGIN
   static Future<Map<String, dynamic>?> login(String email, String senha) async {
