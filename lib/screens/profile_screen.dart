@@ -30,7 +30,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // Carrega os dados da tela anterior
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final args = ModalRoute.of(context)?.settings.arguments as Map?;
-
       final usuario = args?['usuario'] ?? {};
 
       userId = usuario['id'] ?? "";
@@ -55,6 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _salvarAlteracoes() async {
+    // validação do formulário (os campos marcados como obrigatórios)
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -68,6 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       "celular": _celularCtrl.text.trim(),
     };
 
+    // só envia senha se o usuário digitou uma nova
     if (_senhaCtrl.text.trim().isNotEmpty) {
       dados["senha"] = _senhaCtrl.text.trim();
     }
@@ -135,7 +136,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 12),
                       campoRead("Data de Nascimento", dataNascimento),
                       const SizedBox(height: 12),
-                      campo("Nova senha (opcional)", _senhaCtrl, isPassword: true),
+                      // senha é opcional -> obrigatorio: false
+                      campo("Nova senha (opcional)", _senhaCtrl,
+                          isPassword: true, obrigatorio: false),
                     ],
                   ),
                 ),
@@ -202,22 +205,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   // ============================ WIDGETS ============================
-
+  // campo agora tem parâmetro 'obrigatorio' (default true).
   Widget campo(String label, TextEditingController controller,
-      {bool isPassword = false}) {
+      {bool isPassword = false, bool obrigatorio = true}) {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
       decoration: input(label),
-      validator: (v) => (v == null || v.isEmpty) ? "Campo obrigatório" : null,
+      validator: (v) {
+        if (!obrigatorio) return null; // se não é obrigatório, aceita vazio
+        if (v == null || v.isEmpty) return "Campo obrigatório";
+        return null;
+      },
     );
   }
 
+  // campo apenas leitura — com ícone que indica que não pode ser editado
   Widget campoRead(String label, String value) {
     return TextFormField(
       initialValue: value,
       enabled: false,
-      decoration: input(label).copyWith(fillColor: const Color(0xFFEDEAF7)),
+      decoration: input(label).copyWith(
+        fillColor: const Color(0xFFEDEAF7),
+        filled: true,
+        suffixIcon: const Padding(
+          padding: EdgeInsets.only(right: 12.0),
+          child: Icon(Icons.block, color: Colors.grey),
+        ),
+      ),
     );
   }
 

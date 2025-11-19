@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = "http://192.168.0.3:3000";
+  static const String baseUrl = "http://192.168.0.2:3000";
 
   // ============================
   // LOGIN
