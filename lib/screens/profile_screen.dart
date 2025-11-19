@@ -18,6 +18,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _celularCtrl = TextEditingController();
   final TextEditingController _senhaCtrl = TextEditingController();
 
+  late Map usuario; // <-- Guarda o usuário inteiro
+
   String cpf = "";
   String dataNascimento = "";
   String userId = "";
@@ -31,7 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final args = ModalRoute.of(context)?.settings.arguments as Map?;
-      final usuario = args?['usuario'] ?? {};
+      usuario = args?['usuario'] ?? {};
 
       userId = usuario['id'] ?? "";
       cpf = usuario['cpf'] ?? "";
@@ -65,6 +67,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     final resposta = await ApiService.atualizarUsuario(userId, dados);
 
+    if (resposta != null) {
+      // Atualiza no mapa para enviar certo ao voltar
+      usuario['nome'] = dados["nome"];
+      usuario['email'] = dados["email"];
+      usuario['celular'] = dados["celular"];
+    }
+
     setState(() {
       _loading = false;
       _mensagem = resposta != null
@@ -85,7 +94,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.all(18),
             child: Column(
               children: [
-                 FrostedAppBar(title: "Meu Perfil"),
+                FrostedAppBar(
+                  title: "Meu Perfil",
+                  showBack: true,
+
+                  /// 🔙 VOLTAR CORRIGIDO
+                  onBack: () {
+                    Navigator.pushReplacementNamed(
+                      context,
+                      '/home',
+                      arguments: {"usuario": usuario},
+                    );
+                  },
+                ),
+
                 const SizedBox(height: 20),
 
                 Form(
@@ -161,8 +183,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 20),
 
                 TextButton.icon(
-                  onPressed: () =>
-                      Navigator.pushReplacementNamed(context, "/"),
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, "/");
+                  },
                   icon: const Icon(Icons.logout, color: Colors.red),
                   label: const Text(
                     "Sair da conta",

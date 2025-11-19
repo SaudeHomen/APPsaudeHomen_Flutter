@@ -15,39 +15,57 @@ class FrostedAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Cor do fundo do appbar (tema claro e escuro)
+    final barColor = isDark
+        ? Colors.white.withValues(alpha: 0.07)
+        : Colors.black.withValues(alpha: 0.06);
+
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(14),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(12),
+            color: barColor,
+            borderRadius: BorderRadius.circular(14),
           ),
           child: Row(
             children: [
+              /// BOTÃO DE VOLTAR
               if (showBack)
                 GestureDetector(
                   onTap: onBack ?? () => Navigator.pop(context),
-                  child: const Icon(Icons.arrow_back, color: Colors.white),
+                  child: Icon(
+                    Icons.arrow_back,
+                    size: 26,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
                 ),
-              if (showBack) const SizedBox(width: 16),
 
+              if (showBack) const SizedBox(width: 12),
+
+              /// TÍTULO CENTRALIZADO
               Expanded(
                 child: Text(
                   title,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
               ),
 
-              if (showBack) const SizedBox(width: 40),
+              /// Espaço reservado para balancear visualmente quando há seta
+              if (showBack)
+                const SizedBox(
+                  width: 38, // mesmo espaço aproximado do ícone da seta
+                ),
             ],
           ),
         ),

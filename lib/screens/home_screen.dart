@@ -12,7 +12,11 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   late Map<String, dynamic> usuario;
 
+  // ============================================================
+  // 🔥 TODAS AS FAIXAS ETÁRIAS COMPLETAS
+  // ============================================================
   List<Map<String, dynamic>> _getDoencasPorIdade(int idade) {
+    // 10–20
     if (idade >= 10 && idade <= 20) {
       return [
         {
@@ -50,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ];
     }
 
-    // (restante igual)
+    // 21–30
     if (idade >= 21 && idade <= 30) {
       return [
         {
@@ -88,12 +92,126 @@ class _HomeScreenState extends State<HomeScreen> {
       ];
     }
 
-    // 31-40 / 41-50 / 51+ (mesmo código que você já tinha)
-    // ...
+    // 31–40
+    if (idade >= 31 && idade <= 40) {
+      return [
+        {
+          'titulo': 'Hipertensão inicial',
+          'icone': Icons.monitor_heart,
+          'descricaoCurta': 'Pressão começa a subir silenciosamente.',
+          'descricaoLonga':
+              'Estresse, excesso de sal e sedentarismo contribuem para aumento gradual da pressão.',
+          'especialista': 'Cardiologista'
+        },
+        {
+          'titulo': 'Colesterol alto',
+          'icone': Icons.water_drop,
+          'descricaoCurta': 'Aumenta risco de infarto e AVC.',
+          'descricaoLonga':
+              'Acúmulo de gorduras pode entupir artérias. Geralmente assintomático.',
+          'especialista': 'Cardiologista'
+        },
+        {
+          'titulo': 'Pré-diabetes',
+          'icone': Icons.bloodtype,
+          'descricaoCurta': 'Alterações no açúcar por má alimentação.',
+          'descricaoLonga':
+              'Perda de sensibilidade à insulina que, sem controle, evolui para diabetes tipo 2.',
+          'especialista': 'Endocrinologista'
+        },
+        {
+          'titulo': 'Dor lombar crônica',
+          'icone': Icons.accessibility_new,
+          'descricaoCurta': 'Comum por trabalho sentado.',
+          'descricaoLonga':
+              'Má postura e fraqueza muscular causam dores persistentes; fisioterapia ajuda.',
+          'especialista': 'Ortopedista / Fisioterapeuta'
+        },
+      ];
+    }
+
+    // 41–50
+    if (idade >= 41 && idade <= 50) {
+      return [
+        {
+          'titulo': 'Diabetes tipo 2',
+          'icone': Icons.bloodtype,
+          'descricaoCurta': 'Comum nessa idade, especialmente com histórico familiar.',
+          'descricaoLonga':
+              'Resistência à insulina que pode trazer complicações renais, visuais e cardíacas.',
+          'especialista': 'Endocrinologista'
+        },
+        {
+          'titulo': 'Hipertensão',
+          'icone': Icons.favorite,
+          'descricaoCurta': 'Pressão alta pode danificar órgãos.',
+          'descricaoLonga':
+              'Aumenta risco de AVC, infarto e insuficiência cardíaca se não controlada.',
+          'especialista': 'Cardiologista'
+        },
+        {
+          'titulo': 'Apneia do sono',
+          'icone': Icons.bedtime,
+          'descricaoCurta': 'Pausas na respiração geram cansaço.',
+          'descricaoLonga':
+              'Ronco forte, sonolência e risco cardíaco; tratamento com CPAP em muitos casos.',
+          'especialista': 'Pneumologista'
+        },
+        {
+          'titulo': 'Gota',
+          'icone': Icons.spa,
+          'descricaoCurta': 'Inflamação nas articulações causada por ácido úrico.',
+          'descricaoLonga':
+              'Crises dolorosas ligadas à alimentação rica em purinas e álcool; tratamento evita recidivas.',
+          'especialista': 'Reumatologista'
+        },
+      ];
+    }
+
+    // 51+
+    if (idade >= 51) {
+      return [
+        {
+          'titulo': 'Câncer de Próstata',
+          'icone': Icons.male,
+          'descricaoCurta': 'Comum após os 50. Exames essenciais.',
+          'descricaoLonga':
+              'Geralmente silencioso no início. Rastreamento melhora chance de cura.',
+          'especialista': 'Urologista'
+        },
+        {
+          'titulo': 'Osteoporose',
+          'icone': Icons.elderly,
+          'descricaoCurta': 'Ossos fracos aumentam risco de fraturas.',
+          'descricaoLonga':
+              'Perda óssea com idade; prevenção com cálcio, vitamina D e exercícios.',
+          'especialista': 'Ortopedista'
+        },
+        {
+          'titulo': 'Artrite',
+          'icone': Icons.back_hand,
+          'descricaoCurta': 'Inflama as articulações e reduz mobilidade.',
+          'descricaoLonga':
+              'Dor e rigidez que afetam rotina; fisioterapia e medicação podem ajudar.',
+          'especialista': 'Reumatologista'
+        },
+        {
+          'titulo': 'Insuficiência cardíaca leve',
+          'icone': Icons.heart_broken,
+          'descricaoCurta': 'Coração fica mais fraco com a idade.',
+          'descricaoLonga':
+              'Cansaço, falta de ar e inchaço nas pernas; acompanhamento cardiológico obrigatório.',
+          'especialista': 'Cardiologista'
+        },
+      ];
+    }
 
     return [];
   }
 
+  // ============================================================
+  // INTERFACE (mesma que você já tinha)
+  // ============================================================
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -109,7 +227,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final idade = DateTime.now().year - dataNasc.year;
 
     final doencas = _getDoencasPorIdade(idade);
-
     final bubbleColor = theme.colorScheme.primary;
 
     return Scaffold(
@@ -159,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   "Idade: $idade anos",
                   style: TextStyle(
                     fontSize: 14,
-                    color: theme.textTheme.bodyMedium?.color?.withValues(alpha:.7),
+                    color: theme.textTheme.bodyMedium?.color?.withValues(alpha: .7),
                   ),
                 ),
 
@@ -168,7 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   "Estas são as doenças mais comuns na sua faixa etária, seja precavido!",
                   style: TextStyle(
-                    color: theme.textTheme.bodyMedium?.color?.withValues(alpha:.7),
+                    color: theme.textTheme.bodyMedium?.color?.withValues(alpha: .7),
                     fontSize: 14,
                   ),
                 ),
@@ -188,7 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: theme.cardColor,
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
-                            color: primary.withValues(alpha:0.18),
+                            color: primary.withValues(alpha: 0.18),
                             width: 1.2,
                           ),
                         ),
@@ -215,7 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Text(
                                     d['descricaoCurta'],
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: textPrimary.withValues(alpha:0.7),
+                                      color: textPrimary.withValues(alpha: 0.7),
                                     ),
                                   ),
 
@@ -292,15 +409,15 @@ class BubbleBackgroundPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..style = PaintingStyle.fill;
 
-    paint.color = baseColor.withValues(alpha:.12);
+    paint.color = baseColor.withValues(alpha: .12);
     canvas.drawCircle(Offset(size.width * 0.2, size.height * 0.1), 90, paint);
     canvas.drawCircle(Offset(size.width * 0.8, size.height * 0.25), 110, paint);
 
-    paint.color = baseColor.withValues(alpha:.10);
+    paint.color = baseColor.withValues(alpha: .10);
     canvas.drawCircle(Offset(size.width * 0.3, size.height * 0.6), 70, paint);
     canvas.drawCircle(Offset(size.width * 0.75, size.height * 0.75), 80, paint);
 
-    paint.color = baseColor.withValues(alpha:.08);
+    paint.color = baseColor.withValues(alpha: .08);
     canvas.drawCircle(Offset(size.width * 0.15, size.height * 0.8), 40, paint);
     canvas.drawCircle(Offset(size.width * 0.9, size.height * 0.55), 35, paint);
   }
