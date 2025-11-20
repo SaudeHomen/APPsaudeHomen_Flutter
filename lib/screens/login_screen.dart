@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "SAÚDE",
+                            "VIVA",
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           Text(
-                            "DO HOMEM",
+                            "MAIS HOMEM",
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,

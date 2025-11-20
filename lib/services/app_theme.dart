@@ -41,7 +41,7 @@ class AppTheme {
 
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF7F5AE0),
+          backgroundColor: const Color(0xFF395B8C),
           foregroundColor: Colors.white,
         ),
       ),
