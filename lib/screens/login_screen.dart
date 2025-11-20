@@ -57,53 +57,61 @@ class _LoginScreenState extends State<LoginScreen> {
         color: primary,
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 40),
 
-                  // LOGO + TÍTULO
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: primary,
-                          borderRadius: BorderRadius.circular(12),
+                  // LOGO + TÍTULO – FIXO NO CANTO E ALINHADO COM O TEXTO
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+
+                        // LOGO
+                        SizedBox(
+                          height: 150, // aumentar ou diminuir a logo
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            fit: BoxFit.contain,
+                          ),
                         ),
-                        child: const Icon(Icons.add, size: 32, color: Colors.white),
-                      ),
-                      const SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "VIVA",
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: textColor,
+
+                        const SizedBox(width: 12),
+
+                        // TÍTULO ALINHADO NO CENTRO DA LOGO
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "VIVA",
+                              style: TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "MAIS HOMEM",
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: textColor,
+                            Text(
+                              "MAIS HOMEM",
+                              style: TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 12),
 
-                  // ⭐ TEXTO VOLTOU AQUI
+                  // SUBTÍTULO ALINHADO DIRETAMENTE EMBAIXO
                   Text(
                     'Cuide de você,\nprevina-se e viva melhor',
                     style: TextStyle(
