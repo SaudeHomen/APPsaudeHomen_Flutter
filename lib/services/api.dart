@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // Atualize conforme seu IP/ambiente
+  //ip do servidor
   static const String baseUrl = "https://beckham-pseudozoological-mitsue.ngrok-free.dev";
 
   // LOGIN
